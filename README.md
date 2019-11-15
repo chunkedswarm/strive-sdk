@@ -21,7 +21,14 @@ For Android there is a single **AAR** file and for iOS there is a single **Frame
 
 ## How to integrate with Android ?
 
-First, lets start with a small Android snippet using the ExoPlayer (you can use any player you like).
+Lets start with a small Android app using the ExoPlayer (you can use any player you like).
+
+1. Please add the **Android AAR** to your Android Studio project as a dependency
+2. Use the Strive SDK according to the snippet inside your own project
+    1. Define Strive-related variable and credentials
+    2. Initialize the SDK once on startup
+    3. Store SDK information (session, etc.) on app pause (to detect recurring viewers)
+    4. Done!
 
 ```Java
 package io.strivetech.androidsdk;
@@ -76,7 +83,7 @@ public class MainActivity extends Activity implements OnPreparedListener {
     }
 
     private void storeSDKInfo() {
-        // The sdk was not initialized for some reason, there is nothing to store yet
+        // The SDK was not initialized for some reason, there is nothing to store yet
         if (sdk == null) {
             return;
         }
