@@ -27,8 +27,9 @@ Lets start with a small Android app using the ExoPlayer (you can use any player 
 2. Use the Strive SDK according to the snippet inside your own project
     1. Define Strive-related variable and credentials
     2. Initialize the SDK once on startup
-    3. Store SDK information (session, etc.) on app pause (to detect recurring viewers)
-    4. Done!
+    3. Rewrite your normal HLS/MPEG-DASH CDN urls to go through the SDK proxy
+    4. Store SDK information (session, etc.) on app pause (to detect recurring viewers)
+    5. Done!
 
 ```Java
 package io.strivetech.androidsdk;
