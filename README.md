@@ -138,3 +138,81 @@ public class MainActivity extends Activity implements OnPreparedListener {
     }
 }
 ```
+
+## How to integrate with iOS ?
+
+Lets start with a small iOS app using the native HLS player (you can use any player you like).
+
+1. Please add the **iOS Framework** to your iOS XCode project as a dependency
+2. Use the Strive SDK according to the snippet inside your own project
+    1. Define Strive-related variable and credentials
+    2. Initialize the SDK once on startup
+    3. Rewrite your normal HLS/MPEG-DASH CDN urls to go through the SDK proxy
+    4. Store SDK information (session, etc.) on app pause (to detect recurring viewers)
+    5. Done!
+    
+```Swift
+import UIKit
+import AVKit
+import P2pdnsdk
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // 1. Define variables        
+        let userAgent = UAString()
+        let originBaseURL = "XXX"
+        let sourceID = UserDefaults.standard.string(forKey: "strive-source-token") ?? ""
+        let hlsURL = originBaseURL + "XXX.m3u8"
+        let accountID = "XXX"
+        let swarmID = "XXX"
+        
+        // 2. Init SDK
+        let err: NSErrorPointer = nil
+        sdk = P2pdnsdkResumeFromAPI(P2pdnsdkModePublicCloud, userAgent, originBaseURL, sourceID, accountID, swarmID, err)
+       
+        print("User agent: \(userAgent)")
+        
+        if sourceID == "" {
+            print("Requesting new source token")
+        } else {
+            print("Resuming with existing source token \(sourceID)")
+        }
+
+        if let error = err?.pointee {
+            print(error.localizedDescription)
+        }
+       
+        // 3. Rewrite url
+        let url = sdk?.rewriteURL(hlsURL)
+        
+        // 4. Setup player
+        if let mediaUrl = URL(string: url!) {
+            // Load movie via url
+            let player = AVPlayer(url: mediaUrl)
+            let layer = AVPlayerLayer(player: player)
+            self.view.layer.addSublayer(layer)
+           
+            // Set stream view where will be shown stream
+            layer.frame = self.view.layer.bounds
+            player.play()
+       }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 5. Finally, store source token for next session
+        if sdk != nil {
+            let sourceToken = sdk!.sourceToken()
+            
+            UserDefaults.standard.set(sourceToken, forKey: "strive-source-token")
+            
+            print("Storing source token \(sourceToken)")
+        }
+    }
+}
+```
+
