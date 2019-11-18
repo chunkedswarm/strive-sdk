@@ -188,7 +188,7 @@ class ViewController: UIViewController {
         // 3. Rewrite url
         let url = sdk?.rewriteURL(hlsURL)
         
-        // 4. Setup player
+        // Setup player
         if let mediaUrl = URL(string: url!) {
             // Load movie via url
             let player = AVPlayer(url: mediaUrl)
@@ -204,7 +204,7 @@ class ViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // 5. Finally, store source token for next session
+        // 4. Finally, store source token for next session
         if sdk != nil {
             let sourceToken = sdk!.sourceToken()
             
