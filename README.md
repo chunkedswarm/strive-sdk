@@ -48,8 +48,9 @@ import p2pdnsdk.SDK;
 public class MainActivity extends Activity implements OnPreparedListener {
 
     // 1. Declare SDK variables
-    private final String userAgent = "strive-sdk-android/2.0.0 " + System.getProperty("http.agent"); // The user agent (important for reporting)
+    private final String userAgent = "strive-sdk-android/2.1.0 " + System.getProperty("http.agent"); // The user agent (important for reporting)
     private final String originBaseURL = "XXX"; // The CDN base url (e.g. https://yourcdn.com)
+    private final String backupBaseURL = "XXX"; // (Optional) The CDN backup base url (e.g. https://yourcdn-backup.com)
     private final String accountID = "XXX"; // Your Strive AccountID which can be found inside the dashboard
     private final String swarmID = "XXX"; // Your Strive SwarmID which can be found inside the dashboard
     private SDK sdk; // Global reference to Strive SDK
@@ -70,7 +71,18 @@ public class MainActivity extends Activity implements OnPreparedListener {
                 System.out.println("Resuming source token: " + sourceToken);
             }
 
-            // Initialize the Strive SDK with the predefined variables
+            // [With Backup] Initialize the Strive SDK with the predefined variables
+            sdk = P2pdnsdk.resumeFromAPIWithBackup(P2pdnsdk.ModePublicCloud,
+                    userAgent,
+                    originBaseURL,
+                    backupBaseURL,
+                    sourceToken,
+                    accountID,
+                    swarmID);
+
+            // OR
+
+            // [Without Backup] Initialize the Strive SDK with the predefined variables
             sdk = P2pdnsdk.resumeFromAPI(P2pdnsdk.ModePublicCloud,
                     userAgent,
                     originBaseURL,
@@ -186,7 +198,7 @@ func deviceName() -> String {
 
 // Necessary to generate a meaningful user agent string
 func UAString() -> String {
-    return "strive-sdk-ios/2.0.0 \(deviceName()) \(deviceVersion()) \(CFNetworkVersion()) \(DarwinVersion())"
+    return "strive-sdk-ios/2.1.0 \(deviceName()) \(deviceVersion()) \(CFNetworkVersion()) \(DarwinVersion())"
 }
 
 class ViewController: UIViewController {
@@ -196,7 +208,8 @@ class ViewController: UIViewController {
 
         // 1. Define variables        
         let userAgent = UAString()
-        let originBaseURL = "XXX"
+        let originBaseURL = "XXX" // The CDN base url (e.g. https://yourcdn.com)
+        let backupBaseURL = "XXX" // (Optional) The CDN backup base url (e.g. https://yourcdn-backup.com)
         let sourceID = UserDefaults.standard.string(forKey: "strive-source-token") ?? ""
         let hlsURL = originBaseURL + "XXX.m3u8"
         let accountID = "XXX"
@@ -204,6 +217,10 @@ class ViewController: UIViewController {
         
         // 2. Init SDK
         let err: NSErrorPointer = nil
+        // [With Backup] Initialize the Strive SDK with the predefined variables
+        sdk = P2pdnsdkResumeFromAPIWithBackup(P2pdnsdkModePublicCloud, userAgent, originBaseURL, backupBaseURL, sourceID, accountID, swarmID, err)
+        // OR
+        // [Without Backup] Initialize the Strive SDK with the predefined variables
         sdk = P2pdnsdkResumeFromAPI(P2pdnsdkModePublicCloud, userAgent, originBaseURL, sourceID, accountID, swarmID, err)
        
         print("User agent: \(userAgent)")
