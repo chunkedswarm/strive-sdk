@@ -204,6 +204,8 @@ func UAString() -> String {
 
 class ViewController: UIViewController {
 
+    var sdk: P2pdnsdkSDK?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
